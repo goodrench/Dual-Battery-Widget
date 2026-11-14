@@ -6,32 +6,39 @@
           android:versionName="1.1.8">
     <uses-sdk android:targetSdkVersion="11" android:minSdkVersion="4" />
     <uses-permission android:name="com.android.vending.BILLING" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <application android:icon="@drawable/icon" android:label="@string/app_name" android:hardwareAccelerated="true"
                  android:name=".BatteryApplication">
         <!-- Widgets -->
-        <receiver android:name="org.flexlabs.widgets.dualbattery.BatteryWidget" android:label="@string/widget_name" android:enabled="@bool/afterHoneycomb">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+        <receiver android:name="org.flexlabs.widgets.dualbattery.BatteryWidget" android:exported="true" android:label="@string/widget_name" android:enabled="@bool/afterHoneycomb">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
+                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
+                <action android:name="android.intent.action.BATTERY_LOW" />
+                <action android:name="android.intent.action.BATTERY_OKAY" />
+            </intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_info" />
         </receiver>
-        <receiver android:name="org.flexlabs.widgets.dualbattery.BatteryWidget1x1" android:label="@string/widget_name_1x1" android:enabled="@bool/beforeHoneycomb">
+        <receiver android:name="org.flexlabs.widgets.dualbattery.BatteryWidget1x1" android:exported="true" android:label="@string/widget_name_1x1" android:enabled="@bool/beforeHoneycomb">
             <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_info_1x1" />
         </receiver>
-        <receiver android:name="org.flexlabs.widgets.dualbattery.BatteryWidget2x2" android:label="@string/widget_name_2x2" android:enabled="@bool/beforeHoneycomb">
+        <receiver android:name="org.flexlabs.widgets.dualbattery.BatteryWidget2x2" android:exported="true" android:label="@string/widget_name_2x2" android:enabled="@bool/beforeHoneycomb">
             <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_info_2x2" />
         </receiver>
-        <receiver android:name="org.flexlabs.widgets.dualbattery.BatteryWidget3x4" android:label="@string/widget_name_3x4" android:enabled="@bool/beforeHoneycomb">
+        <receiver android:name="org.flexlabs.widgets.dualbattery.BatteryWidget3x4" android:exported="true" android:label="@string/widget_name_3x4" android:enabled="@bool/beforeHoneycomb">
             <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_info_3x4" />
         </receiver>
         <!-- Widget widgetsettings activity -->
         <activity android:name=".widgetsettings.WidgetActivity" android:excludeFromRecents="true"
-                  android:label="Widget Properties" android:theme="@style/Theme.FlexLabs">
+                  android:label="Widget Properties" android:exported="true" android:theme="@style/Theme.FlexLabs">
             <intent-filter><action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" /></intent-filter>
         </activity>
         <!-- Welcome Activity -->
-        <activity android:name=".app.BatteryHistoryActivity" android:theme="@style/Theme.FlexLabs">
+        <activity android:name=".app.BatteryHistoryActivity" android:exported="true" android:theme="@style/Theme.FlexLabs">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -40,7 +47,7 @@
         <activity android:name=".app.SettingsActivity" android:theme="@style/Theme.FlexLabs" />
         <!-- Battery monitor service -->
         <service android:name=".service.MonitorService" android:label="Battery Monitor Service" />
-        <receiver android:name=".service.BootUpReceiver" android:label="Monitor Service Auto Starter">
+        <receiver android:name=".service.BootUpReceiver" android:exported="false" android:label="Monitor Service Auto Starter">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <category android:name="android.intent.category.DEFAULT" />
