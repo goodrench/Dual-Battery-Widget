@@ -19,6 +19,8 @@ package org.flexlabs.widgets.dualbattery.widgetsettings;
 import android.app.AlertDialog;
 import android.appwidget.AppWidgetManager;
 import android.content.Intent;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
@@ -47,6 +49,15 @@ public class WidgetActivity extends SherlockFragmentActivity implements AdapterV
     private int mCurrentTab = -1;
     private Fragment[] fragments;
     private String[] titles;
+    private SharedPreferences widgetPreferences;
+    private final SharedPreferences.OnSharedPreferenceChangeListener refreshOnSettingChange =
+            new SharedPreferences.OnSharedPreferenceChangeListener() {
+                @Override
+                public void onSharedPreferenceChanged(SharedPreferences preferences, String key) {
+                    if (appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID)
+                        BatteryWidgetUpdater.updateWidget(WidgetActivity.this, appWidgetId);
+                }
+            };
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,6 +66,14 @@ public class WidgetActivity extends SherlockFragmentActivity implements AdapterV
         appWidgetId = extras.getInt(
                 AppWidgetManager.EXTRA_APPWIDGET_ID,
                 AppWidgetManager.INVALID_APPWIDGET_ID);
+
+        // Reflect theme, color and layout changes without reopening settings.
+        if (appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
+            widgetPreferences = getSharedPreferences(
+                    org.flexlabs.widgets.dualbattery.Constants.SETTINGS_WIDGET_FILE + appWidgetId,
+                    Context.MODE_PRIVATE);
+            widgetPreferences.registerOnSharedPreferenceChangeListener(refreshOnSettingChange);
+        }
 
         fragments = new Fragment[5];
         fragments[0] = new BatteryInfoFragment();
@@ -134,6 +153,13 @@ public class WidgetActivity extends SherlockFragmentActivity implements AdapterV
         transaction.replace(R.id.prefs, fragments[position]);
         transaction.commit();
         mList.setItemChecked(position, true);
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (widgetPreferences != null)
+            widgetPreferences.unregisterOnSharedPreferenceChangeListener(refreshOnSettingChange);
+        super.onDestroy();
     }
 
     @Override
