@@ -19,7 +19,6 @@ package org.flexlabs.widgets.dualbattery;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.*;
-import org.flexlabs.widgets.dualbattery.service.MonitorService;
 
 import java.io.File;
 
@@ -27,7 +26,19 @@ public class BatteryWidget extends AppWidgetProvider {
     @Override
     public void onEnabled(Context context) {
         super.onEnabled(context);
-        context.startService(new Intent(context, MonitorService.class));
+        BatteryWidgetUpdater.updateAllWidgets(context, BatteryLevel.getCurrent(), null);
+    }
+
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        super.onReceive(context, intent);
+        String action = intent.getAction();
+        if (Intent.ACTION_POWER_CONNECTED.equals(action)
+                || Intent.ACTION_POWER_DISCONNECTED.equals(action)
+                || Intent.ACTION_BATTERY_LOW.equals(action)
+                || Intent.ACTION_BATTERY_OKAY.equals(action)) {
+            BatteryWidgetUpdater.updateAllWidgets(context, BatteryLevel.getCurrent(), null);
+        }
     }
 
     @Override
@@ -42,9 +53,7 @@ public class BatteryWidget extends AppWidgetProvider {
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-        // ensuring the service is still running, even if it was killed, and updating the widget
-        Intent intent = new Intent(context, MonitorService.class);
-        intent.putExtra(Constants.EXTRA_WIDGET_IDS, appWidgetIds);
-        context.startService(intent);
+        // AppWidgetProvider receives scheduled updates even when no app service runs.
+        BatteryWidgetUpdater.updateAllWidgets(context, BatteryLevel.getCurrent(), appWidgetIds);
     }
 }
