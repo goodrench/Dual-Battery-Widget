@@ -108,9 +108,11 @@ public final class ModernWidget extends AppWidgetProvider {
                 & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
         if ("DARK".equals(theme)) dark = true;
         if ("LIGHT".equals(theme)) dark = false;
+        views.setInt(R.id.widget_root, "setBackgroundResource", dark ? R.drawable.widget_background : R.drawable.widget_background_light);
         int main = dark ? Color.WHITE : Color.rgb(30, 37, 52);
         int secondary = dark ? Color.rgb(218, 223, 238) : Color.rgb(66, 73, 91);
         if ("MATERIAL".equals(theme) && Build.VERSION.SDK_INT >= 31) {
+            views.setInt(R.id.widget_root, "setBackgroundResource", R.drawable.widget_background);
             main = context.getColor(android.R.color.system_accent1_100);
             secondary = context.getColor(android.R.color.system_accent2_200);
         }
