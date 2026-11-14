@@ -38,9 +38,14 @@ public class BatteryLevel {
     
     public static void update(BatteryLevel level) { _instance = level; }
     public static BatteryLevel getCurrent() {
-        if (_instance == null) {
-            Intent intent = BatteryApplication.getInstance().registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
-            _instance = parse(intent.getExtras());
+        // Query the sticky broadcast each time. The old cached value could remain
+        // stale after Android stopped the legacy monitoring service.
+        Intent intent = BatteryApplication.getInstance().registerReceiver(
+                null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+        if (intent != null) {
+            BatteryLevel latest = parse(intent.getExtras());
+            if (latest != null)
+                _instance = latest;
         }
         return _instance;
     }
