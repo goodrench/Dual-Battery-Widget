@@ -15,6 +15,8 @@ import android.view.Gravity;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.content.Intent;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
@@ -26,6 +28,7 @@ import java.util.Set;
 public final class SettingsActivity extends Activity {
     private Spinner devices;
     private Spinner themes;
+    private CheckBox liveUpdates;
     private final List<String> addresses = new ArrayList<>();
     private final List<String> deviceLabels = new ArrayList<>();
     private SharedPreferences prefs;
@@ -59,6 +62,10 @@ public final class SettingsActivity extends Activity {
         layout.addView(grant);
         TextView note = text("Only paired devices that report their battery level to Android can display a percentage. Refreshes occur when Android delivers events, on settings changes, and periodically.", 14);
         layout.addView(note);
+        liveUpdates = new CheckBox(this);
+        liveUpdates.setText("Real-time updates (requires ongoing notification)");
+        liveUpdates.setChecked(prefs.getBoolean("live_updates", false));
+        layout.addView(liveUpdates);
         Button save = new Button(this);
         save.setText("Save and refresh widget");
         save.setOnClickListener(v -> {
@@ -68,7 +75,18 @@ public final class SettingsActivity extends Activity {
             prefs.edit().putString(ModernWidget.THEME, keys[Math.max(0, themeIndex)])
                     .putString(ModernWidget.ACCESSORY,
                             deviceIndex >= 0 && deviceIndex < addresses.size() ? addresses.get(deviceIndex) : "")
+                    .putBoolean("live_updates", liveUpdates.isChecked())
                     .apply();
+            Intent monitor = new Intent(this, BatteryMonitorService.class);
+            if (liveUpdates.isChecked()) {
+                if (Build.VERSION.SDK_INT >= 33 && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, 102);
+                }
+                startForegroundService(monitor);
+            } else {
+                stopService(monitor);
+            }
             ModernWidget.refreshAll(this);
             setResult(RESULT_OK);
             finish();
