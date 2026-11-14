@@ -41,6 +41,14 @@ public final class ModernWidget extends AppWidgetProvider {
                 || Intent.ACTION_BATTERY_OKAY.equals(action)
                 || Intent.ACTION_BOOT_COMPLETED.equals(action)
                 || BluetoothDevice.ACTION_BATTERY_LEVEL_CHANGED.equals(action)) {
+            if (Intent.ACTION_BOOT_COMPLETED.equals(action) && context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+                    .getBoolean("live_updates", false)) {
+                try {
+                    context.startForegroundService(new Intent(context, BatteryMonitorService.class));
+                } catch (RuntimeException ignored) {
+                    // Foreground service start may be disallowed; scheduled updates remain available.
+                }
+            }
             refreshAll(context);
         }
     }
