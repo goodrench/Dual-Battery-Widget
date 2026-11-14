@@ -22,6 +22,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.BatteryManager;
+import android.os.Build;
 import android.view.View;
 import android.widget.RemoteViews;
 import org.flexlabs.widgets.dualbattery.widgetsettings.WidgetActivity;
@@ -41,7 +42,7 @@ public class BatteryWidgetUpdater {
             int[] widgets2 = manager.getAppWidgetIds(new ComponentName(context, BatteryWidget1x1.class));
             int[] widgets3 = manager.getAppWidgetIds(new ComponentName(context, BatteryWidget2x2.class));
             int[] widgets4 = manager.getAppWidgetIds(new ComponentName(context, BatteryWidget3x4.class));
-            widgets = new int[widgets1.length + widgets2.length + widgets3.length];
+            widgets = new int[widgets1.length + widgets2.length + widgets3.length + widgets4.length];
             System.arraycopy(widgets1, 0, widgets, 0, widgets1.length);
             System.arraycopy(widgets2, 0, widgets, widgets1.length, widgets2.length);
             System.arraycopy(widgets3, 0, widgets, widgets1.length + widgets2.length, widgets3.length);
@@ -152,7 +153,10 @@ public class BatteryWidgetUpdater {
         Intent intent = new Intent(context, WidgetActivity.class);
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, widgetId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        int flags = PendingIntent.FLAG_UPDATE_CURRENT;
+        if (Build.VERSION.SDK_INT >= 23)
+            flags |= PendingIntent.FLAG_IMMUTABLE;
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, widgetId, intent, flags);
         views.setOnClickPendingIntent(R.id.widget, pendingIntent);
 
         widgetManager.updateAppWidget(widgetId, views);
