@@ -33,7 +33,7 @@ Requirements:
 - Android SDK Platform 37
 - Android SDK Build-Tools and platform tools
 
-The Gradle wrapper and all application dependencies used by the Gradle build are included or resolved from Google Maven and Maven Central. Initializing the legacy Git submodules is not required.
+The Gradle wrapper is included, and application dependencies are resolved from Google Maven and Maven Central.
 
 ```bash
 git clone https://github.com/goodrench/Dual-Battery-Widget.git
@@ -57,7 +57,6 @@ Unit tests cover feedback validation and battery-history series generation. Andr
 - `src/` — Java and Kotlin application code
 - `res/` — Android resources, preferences, layouts, and widget definitions
 - `test/` — local JVM unit tests
-- `lib/` — legacy libraries retained in the source tree; they are not modules in the current Gradle build
 
 ## Changelog and license
 

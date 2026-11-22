@@ -19,6 +19,7 @@ Changelog
 [*] Replaced the legacy battery chart and settings UI with current components, including system-bar inset handling
 [+] Added unit tests for battery-history series generation and feedback validation
 [-] Removed the obsolete in-app billing donation integration
+[-] Removed unused AChartEngine, ActionBarSherlock, and ViewPagerIndicator libraries and legacy Ant/IDE project files
 
 **Update 2012-06-01: v1.1.3**  
 \* If upgrading from older versions (pre 1.0) showing an alert when opening the widget properties, instead of changing settings  
