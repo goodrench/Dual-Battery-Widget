@@ -31,7 +31,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         PreferenceValues.migrateToString(
                 requireContext().getSharedPreferences(Constants.SETTINGS_FILE, Context.MODE_PRIVATE),
                 Constants.SETTING_DEFAULT_DAYS_TAB);
-        if (BatteryLevel.getCurrent().is_dockFriendly()) {
+        BatteryLevel level = BatteryLevel.getCurrent();
+        if (level != null && level.is_dockFriendly()) {
             addPreferencesFromResource(R.xml.settings_0_dock_notif);
         }
         addPreferencesFromResource(R.xml.settings_1_general);

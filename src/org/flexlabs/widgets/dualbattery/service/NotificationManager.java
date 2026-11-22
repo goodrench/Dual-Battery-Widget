@@ -90,7 +90,7 @@ public class NotificationManager implements SharedPreferences.OnSharedPreference
         if (Constants.SETTING_NOTIFICATION_ICON.equals(key)) {
             enabled = new SettingsContainer(mContext).isShowNotificationIcon();
             BatteryLevel level = BatteryLevel.getCurrent();
-            if (enabled && level.get_dock_level() != null) {
+            if (enabled && level != null && level.get_dock_level() != null) {
                 update(level.get_dock_level(), level.get_dock_status() == Constants.DOCK_STATE_CHARGING);
             } else {
                 hide();

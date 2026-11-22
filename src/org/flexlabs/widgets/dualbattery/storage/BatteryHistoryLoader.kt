@@ -25,7 +25,7 @@ object BatteryHistoryLoader {
         }
         return HistorySeriesBuilder.build(
             entries,
-            BatteryLevel.getCurrent().is_dockFriendly(),
+            BatteryLevel.getCurrent()?.is_dockFriendly() == true,
             System.currentTimeMillis()
         )
     }

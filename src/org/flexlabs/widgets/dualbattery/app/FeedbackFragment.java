@@ -17,6 +17,7 @@
 package org.flexlabs.widgets.dualbattery.app;
 
 import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -66,7 +67,14 @@ public class FeedbackFragment extends Fragment {
                         .show();
                 return;
             }
-            sendFeedback(requireContext(), feedbackText);
+            if (!sendFeedback(requireContext(), feedbackText)) {
+                new AlertDialog.Builder(requireContext())
+                        .setTitle(R.string.app_name)
+                        .setMessage(R.string.no_email_app)
+                        .setPositiveButton(android.R.string.ok, null)
+                        .show();
+                return;
+            }
             resetFeedback = true;
         }
     };
@@ -84,13 +92,17 @@ public class FeedbackFragment extends Fragment {
         resetFeedback = false;
     }
 
-    public static void sendFeedback(Context context, CharSequence feedback) {
-        Intent intent = new Intent(Intent.ACTION_SEND);
-        intent.setDataAndType(Uri.parse("mailto:"), "message/rfc822");
+    public static boolean sendFeedback(Context context, CharSequence feedback) {
+        Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:"));
         intent.putExtra(Intent.EXTRA_EMAIL, new String[] { Constants.FeedbackDestination });
         intent.putExtra(Intent.EXTRA_SUBJECT, "Dual Battery Widget Feedback (v" + Constants.VERSION + ")");
         intent.putExtra(Intent.EXTRA_TEXT, Html.fromHtml(getDeviceDetails(context, feedback)));
-        context.startActivity(Intent.createChooser(intent, "Email"));
+        try {
+            context.startActivity(Intent.createChooser(intent, "Email"));
+            return true;
+        } catch (ActivityNotFoundException e) {
+            return false;
+        }
     }
 
     private static String getDeviceDetails(Context context, CharSequence feedback) {
@@ -122,7 +134,8 @@ public class FeedbackFragment extends Fragment {
                 sb.append("<br />\n<b>Battery dock level</b> ").append(extras.get("dock_level"));
             }
         }
-        sb.append("<br />\n<b>Is Dock supported:</b> ").append(BatteryLevel.getCurrent().is_dockFriendly());
+        BatteryLevel level = BatteryLevel.getCurrent();
+        sb.append("<br />\n<b>Is Dock supported:</b> ").append(level != null && level.is_dockFriendly());
         sb.append("<br />\n<b>Kernel:</b> ").append(getFormattedKernelVersion().replace("\n", "<br />\n"));
         return sb.toString();
     }

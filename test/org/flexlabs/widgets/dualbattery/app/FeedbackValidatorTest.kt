@@ -11,6 +11,11 @@ class FeedbackValidatorTest {
     }
 
     @Test
+    fun `accepts feedback separated by whitespace characters`() {
+        assertTrue(FeedbackValidator.isValid("The\twidget\nworks\twell\non\tmy tablet"))
+    }
+
+    @Test
     fun `rejects null short and low-detail feedback`() {
         assertFalse(FeedbackValidator.isValid(null))
         assertFalse(FeedbackValidator.isValid("A few words here"))

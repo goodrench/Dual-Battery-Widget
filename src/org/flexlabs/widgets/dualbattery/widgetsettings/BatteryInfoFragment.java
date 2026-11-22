@@ -16,12 +16,13 @@
 
 package org.flexlabs.widgets.dualbattery.widgetsettings;
 
+import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.BatteryManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -31,18 +32,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TableRow;
 import android.widget.TextView;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import org.flexlabs.widgets.dualbattery.BatteryLevel;
 import org.flexlabs.widgets.dualbattery.Constants;
 import org.flexlabs.widgets.dualbattery.R;
+import org.flexlabs.widgets.dualbattery.storage.BatteryHistory;
 import org.flexlabs.widgets.dualbattery.storage.BatteryHistoryLoader;
 import org.flexlabs.widgets.dualbattery.ui.BatteryHistoryChart;
 
 import java.text.DateFormat;
 import java.text.NumberFormat;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class BatteryInfoFragment extends Fragment {
+    private final ExecutorService historyExecutor = Executors.newSingleThreadExecutor();
     private IntentFilter mIntentFilter;
+    private int historyLoadGeneration;
     private TextView mStatus, mLevel, mScale;
     private TextView mHealth;
     private TextView mVoltage;
@@ -89,18 +96,44 @@ public class BatteryInfoFragment extends Fragment {
 
     @Override
     public void onPause() {
-        super.onPause();
+        historyLoadGeneration++;
         requireActivity().unregisterReceiver(batteryReceiver);
+        super.onPause();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
-            requireActivity().registerReceiver(batteryReceiver, mIntentFilter, Context.RECEIVER_EXPORTED);
-        else
-            requireActivity().registerReceiver(batteryReceiver, mIntentFilter);
-        mChartView.setData(BatteryHistoryLoader.load(requireContext(), 7), 7);
+        ContextCompat.registerReceiver(requireActivity(), batteryReceiver, mIntentFilter,
+                ContextCompat.RECEIVER_NOT_EXPORTED);
+        loadHistory();
+    }
+
+    private void loadHistory() {
+        final WidgetActivity activity = (WidgetActivity) requireActivity();
+        final Context context = activity.getApplicationContext();
+        final int generation = ++historyLoadGeneration;
+        historyExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                final BatteryHistory history = BatteryHistoryLoader.load(context, 7);
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (!isAdded() || generation != historyLoadGeneration)
+                            return;
+                        mChartView.setData(history, 7);
+                    }
+                });
+            }
+        });
+    }
+
+    @Override
+    public void onDestroy() {
+        historyLoadGeneration++;
+        historyExecutor.shutdownNow();
+        super.onDestroy();
     }
 
     @Override
@@ -122,11 +155,8 @@ public class BatteryInfoFragment extends Fragment {
             mLevel.setText(formatInteger(intent.getIntExtra("level", 0)));
             mScale.setText(formatInteger(intent.getIntExtra("scale", 0)));
             int voltage = intent.getIntExtra("voltage", 0);
-            int voltageRes = voltage > 1000
-                    ? R.string.battery_info_voltage_units_mV
-                    : R.string.battery_info_voltage_units_V;
             mVoltage.setText(getString(R.string.battery_info_voltage_value,
-                    formatInteger(voltage), context.getString(voltageRes)));
+                    formatInteger(voltage), context.getString(R.string.battery_info_voltage_units_mV)));
             temperature = intent.getIntExtra("temperature", 0);
             updateTemperature();
             mTechnology.setText(intent.getStringExtra("technology"));
@@ -230,7 +260,15 @@ public class BatteryInfoFragment extends Fragment {
     public final View.OnClickListener batterySummaryListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            startActivity(new Intent("android.intent.action.POWER_USAGE_SUMMARY"));
+            try {
+                startActivity(new Intent("android.intent.action.POWER_USAGE_SUMMARY"));
+            } catch (ActivityNotFoundException e) {
+                new AlertDialog.Builder(requireContext())
+                        .setTitle(R.string.app_name)
+                        .setMessage(R.string.battery_summary_unavailable)
+                        .setPositiveButton(android.R.string.ok, null)
+                        .show();
+            }
         }
     };
 

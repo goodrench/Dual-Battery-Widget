@@ -28,6 +28,7 @@ object HistorySeriesBuilder {
         var time = now
         var mainSkipped = false
         var dockSkipped = false
+        var dockConnected = false
 
         for (entry in entries.sortedBy { it.time }) {
             time = entry.time
@@ -36,13 +37,16 @@ object HistorySeriesBuilder {
                 main.add(ChartPoint(entry.time, entry.level))
                 oldLevel = entry.level
             }
-            if (dockSupported && entry.dockStatus > 1) {
-                dockSkipped = entry.dockLevel == oldDockLevel
-                if (!dockSkipped) {
-                    dock.add(ChartPoint(entry.time, entry.dockLevel))
-                    oldDockLevel = entry.dockLevel
-                }
+
+            val connected = dockSupported && entry.dockStatus > 1
+            if (connected && (!dockConnected || entry.dockLevel != oldDockLevel)) {
+                dock.add(ChartPoint(entry.time, entry.dockLevel))
+                oldDockLevel = entry.dockLevel
+                dockSkipped = false
+            } else {
+                dockSkipped = connected
             }
+            dockConnected = connected
         }
         if (mainSkipped) main.add(ChartPoint(time, oldLevel))
         if (dockSkipped) dock.add(ChartPoint(time, oldDockLevel))

@@ -78,6 +78,40 @@ class HistorySeriesBuilderTest {
     }
 
     @Test
+    fun `does not extend a repeated dock reading after disconnect`() {
+        val history = HistorySeriesBuilder.build(
+            listOf(
+                BatteryHistoryEntry(1_000, 90, 2, 50),
+                BatteryHistoryEntry(1_500, 90, 3, 50),
+                BatteryHistoryEntry(2_000, 90, 1, -1)
+            ),
+            dockSupported = true,
+            now = 10_000
+        )
+
+        assertEquals(listOf(ChartPoint(1_000, 50)), history.dock)
+    }
+
+    @Test
+    fun `adds a reconnect point when the dock level is unchanged`() {
+        val history = HistorySeriesBuilder.build(
+            listOf(
+                BatteryHistoryEntry(1_000, 90, 2, 50),
+                BatteryHistoryEntry(2_000, 90, 1, -1),
+                BatteryHistoryEntry(3_000, 90, 2, 50),
+                BatteryHistoryEntry(4_000, 90, 3, 50)
+            ),
+            dockSupported = true,
+            now = 10_000
+        )
+
+        assertEquals(
+            listOf(ChartPoint(1_000, 50), ChartPoint(3_000, 50), ChartPoint(4_000, 50)),
+            history.dock
+        )
+    }
+
+    @Test
     fun `returns empty series without readings`() {
         val history = HistorySeriesBuilder.build(emptyList(), true, 10_000)
 

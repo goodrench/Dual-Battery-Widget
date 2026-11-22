@@ -59,10 +59,8 @@ public class MonitorService extends Service {
     }
 
     private void registerSystemReceiver(IntentFilter filter) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
-            registerReceiver(batteryReceiver, filter, Context.RECEIVER_EXPORTED);
-        else
-            registerReceiver(batteryReceiver, filter);
+        androidx.core.content.ContextCompat.registerReceiver(this, batteryReceiver, filter,
+                androidx.core.content.ContextCompat.RECEIVER_NOT_EXPORTED);
     }
 
     private void processStartIntent(Intent intent) {

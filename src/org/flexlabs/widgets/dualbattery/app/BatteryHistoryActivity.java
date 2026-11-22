@@ -26,14 +26,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.tabs.TabLayout;
 import org.flexlabs.widgets.dualbattery.R;
 import org.flexlabs.widgets.dualbattery.service.MonitorService;
+import org.flexlabs.widgets.dualbattery.storage.BatteryHistory;
 import org.flexlabs.widgets.dualbattery.storage.BatteryHistoryLoader;
 import org.flexlabs.widgets.dualbattery.ui.BatteryHistoryChart;
 import org.flexlabs.widgets.dualbattery.ui.SystemBarInsets;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 public class BatteryHistoryActivity extends AppCompatActivity {
+    private final ExecutorService historyExecutor = Executors.newSingleThreadExecutor();
     private BatteryHistoryChart chart;
     private int days = 3;
     private int defaultDays;
+    private int historyLoadGeneration;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -86,8 +92,29 @@ public class BatteryHistoryActivity extends AppCompatActivity {
     }
 
     private void loadHistory() {
-        if (chart != null)
-            chart.setData(BatteryHistoryLoader.load(this, days), days);
+        final int requestedDays = days;
+        final int generation = ++historyLoadGeneration;
+        historyExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                final BatteryHistory history = BatteryHistoryLoader.load(getApplicationContext(), requestedDays);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (isDestroyed() || generation != historyLoadGeneration)
+                            return;
+                        chart.setData(history, requestedDays);
+                    }
+                });
+            }
+        });
+    }
+
+    @Override
+    protected void onDestroy() {
+        historyLoadGeneration++;
+        historyExecutor.shutdownNow();
+        super.onDestroy();
     }
 
     @Override

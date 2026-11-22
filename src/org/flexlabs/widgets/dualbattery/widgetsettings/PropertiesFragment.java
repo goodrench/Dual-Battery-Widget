@@ -36,7 +36,8 @@ public class PropertiesFragment extends PreferenceFragmentCompat {
         PreferenceValues.migrateToString(preferences, Constants.SETTING_TEXT_COLOR);
         PreferenceValues.migrateToString(preferences, Constants.SETTING_MARGIN);
         addPreferencesFromResource(R.xml.widget_properties_general);
-        if (BatteryLevel.getCurrent().is_dockFriendly()) {
+        BatteryLevel level = BatteryLevel.getCurrent();
+        if (level != null && level.is_dockFriendly()) {
             addPreferencesFromResource(R.xml.widget_properties_dock);
         }
     }

@@ -40,7 +40,7 @@ public class BatteryLevel {
     public static BatteryLevel getCurrent() {
         if (_instance == null) {
             Intent intent = BatteryApplication.getInstance().registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
-            _instance = parse(intent.getExtras());
+            _instance = intent == null ? null : parse(intent.getExtras());
         }
         return _instance;
     }
@@ -51,7 +51,9 @@ public class BatteryLevel {
 
         BatteryLevel level = new BatteryLevel();
         level._status = extras.getInt("status", BatteryManager.BATTERY_STATUS_UNKNOWN);
-        level._level = extras.getInt("level");
+        int rawLevel = extras.getInt("level");
+        int scale = extras.getInt("scale", 100);
+        level._level = scale > 0 ? Math.round(rawLevel * 100f / scale) : 0;
         level._dock_status = extras.getInt("dock_status", Constants.DOCK_STATE_UNKNOWN);
         level._dock_level = extras.getInt("dock_level", -1);
         level._dockFriendly = extras.containsKey("dock_level");

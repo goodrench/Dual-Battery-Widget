@@ -87,6 +87,11 @@ public class WidgetSettingsContainer {
         return justSwapped;
     }
 
+    private static boolean isDockFriendly() {
+        BatteryLevel level = BatteryLevel.getCurrent();
+        return level != null && level.is_dockFriendly();
+    }
+
     private static void updateWidgetSettings(SharedPreferences pref, int version) {
         SharedPreferences.Editor editor = pref.edit();
         if (version == 1 && pref.getAll().size() == 0)
@@ -113,20 +118,20 @@ public class WidgetSettingsContainer {
                 int margin = Integer.valueOf(pref.getString(Constants.SETTING_MARGIN, String.valueOf(Constants.SETTING_MARGIN_DEFAULT)));
                 editor.putInt(Constants.SETTING_MARGIN, margin);
             }
-            if (BatteryLevel.getCurrent().is_dockFriendly())
+            if (isDockFriendly())
                 editor.putBoolean(Constants.SETTING_JUST_SWAPPED, true);
             version = 2;
         }
 
         if (version == 2) {
-            if (BatteryLevel.getCurrent().is_dockFriendly())
+            if (isDockFriendly())
                 editor.putBoolean(Constants.SETTING_JUST_SWAPPED, true);
             version = 3;
         }
 
         if (version == 3) {
             boolean showLabel = pref.getBoolean(Constants.SETTING_SHOW_LABEL, Constants.SETTING_SHOW_LABEL_DEFAULT);
-            if (showLabel && !BatteryLevel.getCurrent().is_dockFriendly())
+            if (showLabel && !isDockFriendly())
                 editor.remove(Constants.SETTING_SHOW_LABEL);
             version = 4;
         }

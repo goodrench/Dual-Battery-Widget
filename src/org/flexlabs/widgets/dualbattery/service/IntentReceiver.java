@@ -103,6 +103,8 @@ public class IntentReceiver extends BroadcastReceiver {
     
                 @Override
                 public void run() {
+                    if (_level == null)
+                        return;
                     try {
                         if (_newData) {
                             BatteryLevelAdapter.Entry entry = new BatteryLevelAdapter.Entry(
