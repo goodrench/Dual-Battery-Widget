@@ -26,8 +26,8 @@
             android:orientation="vertical"
             android:layout_width="0px"
             android:layout_height="match_parent"
-            android:layout_marginRight="@dimen/preference_screen_side_margin_negative"
-            android:layout_marginLeft="@dimen/preference_screen_side_margin"
+            android:layout_marginEnd="@dimen/preference_screen_side_margin_negative"
+            android:layout_marginStart="@dimen/preference_screen_side_margin"
             android:layout_weight="4">
         <ListView android:id="@android:id/list"
                   android:layout_width="match_parent"
@@ -45,15 +45,15 @@
             android:id="@+id/prefs_frame"
             android:layout_width="0px"
             android:background="@drawable/panel_bg_holo_dark"
-            android:layout_marginLeft="@dimen/preference_screen_side_margin"
-            android:layout_marginRight="@dimen/preference_screen_side_margin"
+            android:layout_marginStart="@dimen/preference_screen_side_margin"
+            android:layout_marginEnd="@dimen/preference_screen_side_margin"
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:layout_weight="6">
-        <android.preference.PreferenceFrameLayout
+        <FrameLayout
                 android:id="@+id/prefs"
                 android:layout_width="match_parent"
-                android:layout_height="0dip"
+                android:layout_height="0dp"
                 android:layout_weight="1"
                 android:layout_marginTop="@dimen/preference_screen_header_vertical_padding"/>
     </LinearLayout>

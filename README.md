@@ -1,21 +1,66 @@
-Android Dual Battery Widget
-===========================
-It'll show two batteries, for the standard and the dock battery. If the device doesn't have the secondary battery 
-(if it's not the Asus Eee Pad Transformer) it will hide the second battery 
+# Dual Battery Widget
 
-The widget doesn't run a service or anything else.. It will only register a broadcast receiver for the battery status 
-as long as you have a widget on your screen. If you don't have one, it won't be doing anything at all (hence very battery friendly)
+Dual Battery Widget is an Android home-screen widget for monitoring a device's main battery and a compatible secondary dock battery. It was originally created for the Asus Eee Pad Transformer, whose dock battery is not represented by Android's standard battery indicator.
 
-You can install it from the android play store here: https://play.google.com/store/apps/details?id=org.flexlabs.widgets.dualbattery
+The main battery works on supported Android devices; secondary-battery reporting depends on the device and dock exposing dock battery information to Android.
 
-**Note:** On the current release of Honeycomb, it is possible that the widget will not immediately 
-appear in the widget list after installation. To refresh the widget list, you should either restart your device, 
-or restart the launcher app (Settings -> Applications -> Manage applications -> All -> Launcher -> Force stop)
+## Features
 
-Recent changes can be found in [CHANGELOG.md](https://github.com/artiomchi/Dual-Battery-Widget/blob/master/CHANGELOG.md "Dual Battery Widget changelog")
+- Home-screen battery gauges with configurable battery selection, order, labels, text, and margins
+- Charging and dock-connection status, including the last recorded dock level when undocked
+- Detailed battery information such as health, technology, voltage, and temperature
+- Local battery-history charts for the last 3, 7, or 30 days
+- Optional dock-battery level in the notification area
+- Phone and tablet layouts for widget configuration and application settings
 
-**Note:** To compile these sources you will have to pull down the linked submodules of this git repository.
-To do this run these git commands after you clone:
+## Compatibility and background behavior
 
-    $ git submodule init
-    $ git submodule update
+The current source requires Android 5.0 (API 21) or newer and targets API 37. On Android 13 and newer, the app requests notification permission when opened.
+
+Battery monitoring uses a foreground service with a low-importance ongoing notification, as required by current Android versions. The service listens for battery, dock, and screen changes, updates widgets, and records battery history locally. The separate dock-level notification can be disabled in the app settings.
+
+## Install
+
+The original app is listed on [Google Play](https://play.google.com/store/apps/details?id=org.flexlabs.widgets.dualbattery).
+
+To install a locally built debug APK, use `adb install -r build/outputs/apk/debug/Dual-Battery-Widget-debug.apk` after building.
+
+## Build
+
+Requirements:
+
+- JDK 17 or newer
+- Android SDK Platform 37
+- Android SDK Build-Tools and platform tools
+
+The Gradle wrapper and all application dependencies used by the Gradle build are included or resolved from Google Maven and Maven Central. Initializing the legacy Git submodules is not required.
+
+```bash
+git clone https://github.com/goodrench/Dual-Battery-Widget.git
+cd Dual-Battery-Widget
+./gradlew assembleDebug
+```
+
+The debug APK is written to `build/outputs/apk/debug/Dual-Battery-Widget-debug.apk`.
+
+## Tests and checks
+
+```bash
+./gradlew testDebugUnitTest
+./gradlew lintDebug
+```
+
+Unit tests cover feedback validation and battery-history series generation. Android Lint checks the application source and resources.
+
+## Project layout
+
+- `src/` — Java and Kotlin application code
+- `res/` — Android resources, preferences, layouts, and widget definitions
+- `test/` — local JVM unit tests
+- `lib/` — legacy libraries retained in the source tree; they are not modules in the current Gradle build
+
+## Changelog and license
+
+See [CHANGELOG.md](CHANGELOG.md) for the release history and current unreleased changes.
+
+Dual Battery Widget is licensed under the [Apache License 2.0](LICENSE).

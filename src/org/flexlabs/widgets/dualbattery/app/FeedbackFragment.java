@@ -17,7 +17,6 @@
 package org.flexlabs.widgets.dualbattery.app;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -31,7 +30,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import com.actionbarsherlock.app.SherlockFragment;
+import androidx.fragment.app.Fragment;
 import org.flexlabs.widgets.dualbattery.BatteryLevel;
 import org.flexlabs.widgets.dualbattery.Constants;
 import org.flexlabs.widgets.dualbattery.R;
@@ -42,16 +41,15 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class FeedbackFragment extends SherlockFragment {
+public class FeedbackFragment extends Fragment {
     private EditText feedbackEditor;
     private boolean resetFeedback = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.feedback_form, null);
-        feedbackEditor = (EditText)view.findViewById(R.id.feedbackEditor);
+        View view = inflater.inflate(R.layout.feedback_form, container, false);
+        feedbackEditor = (EditText) view.findViewById(R.id.feedbackEditor);
         feedbackEditor.requestFocus();
-
         view.findViewById(R.id.sendFeedback).setOnClickListener(feedbackListener);
         return view;
     }
@@ -60,16 +58,15 @@ public class FeedbackFragment extends SherlockFragment {
         @Override
         public void onClick(View view) {
             CharSequence feedbackText = feedbackEditor.getText();
-
-            if (!isFeedbackValid(feedbackText)) {
-                new AlertDialog.Builder(getActivity())
+            if (!FeedbackValidator.isValid(feedbackText)) {
+                new AlertDialog.Builder(requireContext())
                         .setTitle(R.string.app_name)
                         .setMessage(R.string.feedback_hint)
-                        .setPositiveButton("OK", null)
+                        .setPositiveButton(android.R.string.ok, null)
                         .show();
                 return;
             }
-            sendFeedback(getActivity(), feedbackText);
+            sendFeedback(requireContext(), feedbackText);
             resetFeedback = true;
         }
     };
@@ -87,31 +84,17 @@ public class FeedbackFragment extends SherlockFragment {
         resetFeedback = false;
     }
 
-    private static boolean isFeedbackValid(CharSequence source) {
-        if (source == null || source.length() < 15)
-            return false;
-
-        int spaces = 0;
-        for(int i = 0; i < source.length(); i++) {
-            if(source.charAt(i) == ' ')
-                spaces++;
-            if (spaces > 3)
-                return true;
-        }
-        return false;
-    }
-
     public static void sendFeedback(Context context, CharSequence feedback) {
-        Intent intent = new Intent(Intent.ACTION_SEND, Uri.parse("mailto:"));
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setDataAndType(Uri.parse("mailto:"), "message/rfc822");
         intent.putExtra(Intent.EXTRA_EMAIL, new String[] { Constants.FeedbackDestination });
         intent.putExtra(Intent.EXTRA_SUBJECT, "Dual Battery Widget Feedback (v" + Constants.VERSION + ")");
         intent.putExtra(Intent.EXTRA_TEXT, Html.fromHtml(getDeviceDetails(context, feedback)));
-        intent.setType("message/rfc822");
         context.startActivity(Intent.createChooser(intent, "Email"));
     }
 
     private static String getDeviceDetails(Context context, CharSequence feedback) {
-        StringBuilder sb = new StringBuilder(feedback);
+        StringBuilder sb = new StringBuilder(TextUtils.htmlEncode(feedback.toString()));
         sb.append("<br />\n<h4>Device details:</h4>");
         sb.append("<br />\n<b>App version:</b> v").append(Constants.VERSION);
         sb.append("<br />\n<b>Brand:</b> ").append(Build.MANUFACTURER);
@@ -121,32 +104,33 @@ public class FeedbackFragment extends SherlockFragment {
         sb.append("<br />\n<b>Version details:</b> ").append(Build.VERSION.INCREMENTAL);
 
         Intent intent = context.registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
-        Bundle extras = intent.getExtras();
-        String allKeys = TextUtils.join(", ", extras.keySet());
-        sb.append("<br />\n<b>Battery intent keys:</b> ").append(allKeys);
-        sb.append("<br />\n<b>Is Dock supported:</b> ").append(BatteryLevel.getCurrent().is_dockFriendly());
-        int dockStatus = extras.getInt("dock_status", -1);
-        String dockStatusStr = "";
-        switch (dockStatus) {
-            case 0: dockStatusStr = " (Unknown)"; break;
-            case 1: dockStatusStr = " (Undocked)"; break;
-            case 2: dockStatusStr = " (Charging)"; break;
-            case 3: dockStatusStr = " (Docked)"; break;
-            case 4: dockStatusStr = " (Discharging)"; break;
-
+        if (intent != null) {
+            Bundle extras = intent.getExtras();
+            if (extras != null) {
+                String allKeys = TextUtils.join(", ", extras.keySet());
+                sb.append("<br />\n<b>Battery intent keys:</b> ").append(allKeys);
+                int dockStatus = extras.getInt("dock_status", -1);
+                String dockStatusStr = "";
+                switch (dockStatus) {
+                    case 0: dockStatusStr = " (Unknown)"; break;
+                    case 1: dockStatusStr = " (Undocked)"; break;
+                    case 2: dockStatusStr = " (Charging)"; break;
+                    case 3: dockStatusStr = " (Docked)"; break;
+                    case 4: dockStatusStr = " (Discharging)"; break;
+                }
+                sb.append("<br />\n<b>Battery dock status</b> ").append(extras.get("dock_status")).append(dockStatusStr);
+                sb.append("<br />\n<b>Battery dock level</b> ").append(extras.get("dock_level"));
+            }
         }
-        sb.append("<br />\n<b>Battery dock status</b> ").append(extras.get("dock_status")).append(dockStatusStr);
-        sb.append("<br />\n<b>Battery dock level</b> ").append(extras.get("dock_level"));
-
+        sb.append("<br />\n<b>Is Dock supported:</b> ").append(BatteryLevel.getCurrent().is_dockFriendly());
         sb.append("<br />\n<b>Kernel:</b> ").append(getFormattedKernelVersion().replace("\n", "<br />\n"));
         return sb.toString();
     }
 
     private static String getFormattedKernelVersion() {
-        String procVersionStr;
-
         try {
             BufferedReader reader = new BufferedReader(new FileReader("/proc/version"), 256);
+            String procVersionStr;
             try {
                 procVersionStr = reader.readLine();
             } finally {
@@ -154,33 +138,22 @@ public class FeedbackFragment extends SherlockFragment {
             }
 
             final String PROC_VERSION_REGEX =
-                    "\\w+\\s+" + /* ignore: Linux */
-                            "\\w+\\s+" + /* ignore: version */
-                            "([^\\s]+)\\s+" + /* group 1: 2.6.22-omap1 */
-                            "\\(([^\\s@]+(?:@[^\\s.]+)?)[^)]*\\)\\s+" + /* group 2: (xxxxxx@xxxxx.constant) */
-                            "\\(.*?(?:\\(.*?\\)).*?\\)\\s+" + /* ignore: (gcc ..) */
-                            "([^\\s]+)\\s+" + /* group 3: #26 */
-                            "(?:PREEMPT\\s+)?" + /* ignore: PREEMPT (optional) */
-                            "(.+)"; /* group 4: date */
-
-            Pattern p = Pattern.compile(PROC_VERSION_REGEX);
-            Matcher m = p.matcher(procVersionStr);
-
-            if (!m.matches()) {
-                Log.e(Constants.LOG, "Regex did not match on /proc/version: " + procVersionStr);
+                    "\\w+\\s+" +
+                            "\\w+\\s+" +
+                            "([^\\s]+)\\s+" +
+                            "\\(([^\\s@]+(?:@[^\\s.]+)?)[^)]*\\)\\s+" +
+                            "\\(.*?(?:\\(.*?\\)).*?\\)\\s+" +
+                            "([^\\s]+)\\s+" +
+                            "(?:PREEMPT\\s+)?" +
+                            "(.+)";
+            Matcher m = Pattern.compile(PROC_VERSION_REGEX).matcher(procVersionStr);
+            if (!m.matches() || m.groupCount() < 4) {
+                Log.e(Constants.LOG, "Could not parse /proc/version");
                 return "Unavailable";
-            } else if (m.groupCount() < 4) {
-                Log.e(Constants.LOG, "Regex match on /proc/version only returned " + m.groupCount()
-                        + " groups");
-                return "Unavailable";
-            } else {
-                return (new StringBuilder(m.group(1)).append("\n").append(
-                        m.group(2)).append(" ").append(m.group(3)).append("\n")
-                        .append(m.group(4))).toString();
             }
+            return m.group(1) + "\n" + m.group(2) + " " + m.group(3) + "\n" + m.group(4);
         } catch (IOException e) {
             Log.e(Constants.LOG, "IO Exception when getting kernel version for Device Info screen", e);
-
             return "Unavailable";
         }
     }

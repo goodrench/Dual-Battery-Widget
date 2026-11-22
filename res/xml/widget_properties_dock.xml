@@ -1,27 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-                  xmlns:flexlabs="http://schemas.android.com/apk/res/org.flexlabs.widgets.dualbattery">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory android:title="@string/propTitle_Dock">
-        <CheckBoxPreference
+        <SwitchPreferenceCompat
                 android:key="showBatteryLabel"
                 android:title="@string/prop_showLabel" android:summary="@string/prop_showLabel_summary"
                 android:defaultValue="false" />
-        <org.flexlabs.widgets.dualbattery.ui.IntegerListPreference
+        <ListPreference
                 android:key="batterySelection"
-                android:title="@string/prop_batterySelection" flexlabs:summary="@string/prop_valuePlaceholder"
-                flexlabs:entries="@array/batterySelection_labels" flexlabs:entryValues="@array/batterySelection_values"
+                android:title="@string/prop_batterySelection" android:summary="@string/prop_valuePlaceholder"
+                android:entries="@array/batterySelection_labels" android:entryValues="@array/batterySelection_values"
                 android:defaultValue="3" />
-        <CheckBoxPreference android:key="swapBatteries"
-                            android:title="@string/prop_swapBatteries"
-                            android:defaultValue="false" />
-        <CheckBoxPreference android:key="alwaysShowDock"
-                            android:title="@string/prop_alwaysShowDock" android:summary="@string/prop_alwaysShowDock_summary"
-                            android:defaultValue="true" />
-        <CheckBoxPreference android:key="showNotDockedMessage" android:dependency="alwaysShowDock"
-                            android:title="@string/prop_showNotDockedMsg" android:summary="@string/prop_showNotDockedMsg_summary"
-                            android:defaultValue="true" />
-        <CheckBoxPreference android:key="showOldDockStatus" android:dependency="alwaysShowDock"
-                            android:title="@string/prop_showDockHistory" android:summary="@string/prop_showDockHistory_summary"
-                            android:defaultValue="false" />
+        <SwitchPreferenceCompat android:key="swapBatteries"
+                                android:title="@string/prop_swapBatteries"
+                                android:defaultValue="false" />
+        <SwitchPreferenceCompat android:key="alwaysShowDock"
+                                android:title="@string/prop_alwaysShowDock" android:summary="@string/prop_alwaysShowDock_summary"
+                                android:defaultValue="true" />
+        <SwitchPreferenceCompat android:key="showNotDockedMessage" android:dependency="alwaysShowDock"
+                                android:title="@string/prop_showNotDockedMsg" android:summary="@string/prop_showNotDockedMsg_summary"
+                                android:defaultValue="true" />
+        <SwitchPreferenceCompat android:key="showOldDockStatus" android:dependency="alwaysShowDock"
+                                android:title="@string/prop_showDockHistory" android:summary="@string/prop_showDockHistory_summary"
+                                android:defaultValue="false" />
     </PreferenceCategory>
 </PreferenceScreen>

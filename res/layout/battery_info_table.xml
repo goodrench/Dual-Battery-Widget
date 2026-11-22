@@ -17,11 +17,11 @@
   -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="fill_parent" android:layout_height="fill_parent"
+              android:layout_width="match_parent" android:layout_height="match_parent"
               android:orientation="vertical" android:id="@+id/body">
-    <LinearLayout android:id="@+id/chart"
-                  android:layout_width="fill_parent" android:layout_height="0dip" android:layout_weight="1" />
-    <TableLayout android:layout_width="fill_parent" android:layout_height="wrap_content">
+    <org.flexlabs.widgets.dualbattery.ui.BatteryHistoryChart android:id="@+id/chart"
+                  android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" />
+    <TableLayout android:layout_width="match_parent" android:layout_height="wrap_content">
         <TableRow>
             <TextView style="@style/table_label" android:text="@string/battery_info_status_label" />
             <TextView style="@style/table_value" android:id="@+id/status" />
@@ -68,5 +68,5 @@
         </TableRow>
     </TableLayout>
     <Button android:id="@+id/batterySummary" android:text="@string/showBatterySummary"
-            android:layout_width="fill_parent" android:layout_height="wrap_content" />
+            android:layout_width="match_parent" android:layout_height="wrap_content" />
 </LinearLayout>

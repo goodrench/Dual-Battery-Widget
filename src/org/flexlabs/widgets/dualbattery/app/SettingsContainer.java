@@ -19,19 +19,22 @@ package org.flexlabs.widgets.dualbattery.app;
 import android.content.Context;
 import android.content.SharedPreferences;
 import org.flexlabs.widgets.dualbattery.Constants;
+import org.flexlabs.widgets.dualbattery.storage.PreferenceValues;
 
 public class SettingsContainer {
     private int defaultDaysTab;
     private boolean showNotificationIcon;
 
     private static SharedPreferences getPreferences(Context context) {
-        return context.getSharedPreferences(Constants.SETTINGS_FILE, Context.MODE_PRIVATE);
+        SharedPreferences preferences = context.getSharedPreferences(Constants.SETTINGS_FILE, Context.MODE_PRIVATE);
+        PreferenceValues.migrateToString(preferences, Constants.SETTING_DEFAULT_DAYS_TAB);
+        return preferences;
     }
 
     private SharedPreferences init(Context context) {
         SharedPreferences pref = getPreferences(context);
         showNotificationIcon = pref.getBoolean(Constants.SETTING_NOTIFICATION_ICON, Constants.SETTING_NOTIFICATION_ICON_DEFAULT);
-        defaultDaysTab = pref.getInt(Constants.SETTING_DEFAULT_DAYS_TAB, Constants.SETTING_DEFAULT_DAYS_TAB_DEFAULT);
+        defaultDaysTab = PreferenceValues.getInt(pref, Constants.SETTING_DEFAULT_DAYS_TAB, Constants.SETTING_DEFAULT_DAYS_TAB_DEFAULT);
         return pref;
     }
 

@@ -33,7 +33,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.graphics.RectF;
 import android.os.Build;
 import android.os.Handler;
@@ -48,8 +47,6 @@ public class GraphicalView extends View {
   private AbstractChart mChart;
   /** The chart renderer. */
   private DefaultRenderer mRenderer;
-  /** The view bounds. */
-  private Rect mRect = new Rect();
   /** The user interface thread handler. */
   private Handler mHandler;
   /** The zoom buttons rectangle. */
@@ -126,6 +123,12 @@ public class GraphicalView extends View {
     }
   }
 
+  @Override
+  protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+    super.onSizeChanged(w, h, oldw, oldh);
+    repaint();
+  }
+
   /**
    * Returns the current series selection object.
    * 
@@ -152,17 +155,10 @@ public class GraphicalView extends View {
   @Override
   protected void onDraw(Canvas canvas) {
     super.onDraw(canvas);
-    canvas.getClipBounds(mRect);
-    int top = mRect.top;
-    int left = mRect.left;
-    int width = mRect.width();
-    int height = mRect.height();
-    if (mRenderer.isInScroll()) {
-      top = 0;
-      left = 0;
-      width = getMeasuredWidth();
-      height = getMeasuredHeight();
-    }
+    int top = 0;
+    int left = 0;
+    int width = getWidth();
+    int height = getHeight();
     mChart.draw(canvas, left, top, width, height, mPaint);
     if (mRenderer != null && mRenderer.isZoomEnabled() && mRenderer.isZoomButtonsVisible()) {
       mPaint.setColor(ZOOM_BUTTONS_COLOR);

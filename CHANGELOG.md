@@ -11,6 +11,15 @@ Changelog
 
 --
 
+**Unreleased**
+
+[*] Migrated the project to Gradle, AndroidX, Material Components, and ViewPager2
+[*] Raised the minimum supported version to Android 5.0 (API 21), and updated the target and compile SDK to API 37
+[*] Updated battery monitoring for foreground-service, notification-permission, and broadcast-receiver requirements on current Android versions
+[*] Replaced the legacy battery chart and settings UI with current components, including system-bar inset handling
+[+] Added unit tests for battery-history series generation and feedback validation
+[-] Removed the obsolete in-app billing donation integration
+
 **Update 2012-06-01: v1.1.3**  
 \* If upgrading from older versions (pre 1.0) showing an alert when opening the widget properties, instead of changing settings  
 \* Improved the layouts in the app, according to lint suggestions  

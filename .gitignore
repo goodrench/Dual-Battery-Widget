@@ -14,3 +14,9 @@ lib/AChartEngine/bin
 gen
 
 default.properties
+
+# Gradle and local SDK configuration #
+#######################################
+.gradle/
+build/
+local.properties

@@ -17,10 +17,12 @@
 package org.flexlabs.widgets.dualbattery.service;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import org.flexlabs.widgets.dualbattery.BatteryLevel;
 import org.flexlabs.widgets.dualbattery.Constants;
 import org.flexlabs.widgets.dualbattery.R;
@@ -29,18 +31,58 @@ import org.flexlabs.widgets.dualbattery.app.SettingsContainer;
 
 public class NotificationManager implements SharedPreferences.OnSharedPreferenceChangeListener {
     private static final int NOTIFICATION_DOCK = 1;
+    private static final String CHANNEL_ID = "battery_monitor";
 
     private android.app.NotificationManager mNotificationManager;
     private Context mContext;
-    private CharSequence title;
     private boolean enabled;
 
     public NotificationManager(Context context) {
         mNotificationManager = (android.app.NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         mContext = context;
-        title = context.getString(R.string.app_name);
+        createNotificationChannel(context);
 
         enabled = new SettingsContainer(context, this).isShowNotificationIcon();
+    }
+
+    static Notification createForegroundNotification(Context context) {
+        createNotificationChannel(context);
+        return createNotification(context, R.drawable.stat_sys_battery, "Monitoring battery levels", 0);
+    }
+
+    private static void createNotificationChannel(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(
+                    CHANNEL_ID, context.getString(R.string.app_name), android.app.NotificationManager.IMPORTANCE_LOW);
+            channel.setShowBadge(false);
+            android.app.NotificationManager manager =
+                    (android.app.NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            manager.createNotificationChannel(channel);
+        }
+    }
+
+    private static Notification createNotification(Context context, int icon, CharSequence text, int level) {
+        Intent intent = new Intent(context, BatteryHistoryActivity.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(
+                context, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            return new Notification.Builder(context, CHANNEL_ID)
+                    .setSmallIcon(icon, level)
+                    .setContentTitle(context.getString(R.string.app_name))
+                    .setContentText(text)
+                    .setContentIntent(contentIntent)
+                    .setOngoing(true)
+                    .setOnlyAlertOnce(true)
+                    .build();
+        }
+        return new androidx.core.app.NotificationCompat.Builder(context, CHANNEL_ID)
+                .setSmallIcon(icon, level)
+                .setContentTitle(context.getString(R.string.app_name))
+                .setContentText(text)
+                .setContentIntent(contentIntent)
+                .setOngoing(true)
+                .setOnlyAlertOnce(true)
+                .getNotification();
     }
 
     @Override
@@ -62,36 +104,13 @@ public class NotificationManager implements SharedPreferences.OnSharedPreference
         }
 
         int icon = charging
-                ? R.drawable.stat_sys_battery_charge // local copy of android.R.drawable.stat_sys_battery_charge
-                : R.drawable.stat_sys_battery;       // local copy of android.R.drawable.stat_sys_battery
-
-        // Notification Builder straight up refuses to create a notification without a ticker :(
-        /*Notification notification = new Notification.Builder(mContext)
-                .setSmallIcon(icon, dockLevel)
-                .setContentTitle(title)
-                .setContentText("Dock battery level: " + dockLevel + "%")
-                //.setNumber(dockLevel)
-                .setAutoCancel(false)
-                .setOngoing(true)
-                .setOnlyAlertOnce(true)
-                .setTicker(null)
-                .getNotification();*/
-        
-        Notification notification = new Notification(icon, null, System.currentTimeMillis());
-        notification.iconLevel = dockLevel;
-        notification.flags =
-            Notification.FLAG_ONGOING_EVENT |
-            Notification.FLAG_ONLY_ALERT_ONCE |
-            Notification.FLAG_NO_CLEAR;
-        Intent intent = new Intent(mContext, BatteryHistoryActivity.class);
-        PendingIntent contentIntent = PendingIntent.getActivity(mContext, 1, intent, 0);
-        notification.setLatestEventInfo(mContext, title, "Dock battery level: " + dockLevel + "%", contentIntent);
-
-        notification.tickerText = null;
-        notification.contentView.setInt(android.R.id.icon, "setImageLevel", dockLevel);
+                ? R.drawable.stat_sys_battery_charge
+                : R.drawable.stat_sys_battery;
+        Notification notification = createNotification(
+                mContext, icon, "Dock battery level: " + dockLevel + "%", dockLevel);
         mNotificationManager.notify(NOTIFICATION_DOCK, notification);
     }
-    
+
     public void hide() {
         mNotificationManager.cancel(NOTIFICATION_DOCK);
     }

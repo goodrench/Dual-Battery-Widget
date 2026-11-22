@@ -16,7 +16,6 @@
   <string name="propHeader_BatteryInfo">Batterij informatie</string>
   <string name="propHeader_Properties">Widget instellingen</string>
   <string name="propHeader_Feedback">Feedback</string>
-  <string name="propHeader_Donate">Doneren</string>
   <string name="propHeader_About">Over</string>
   <string name="propTitle_General">Algemeen</string>
   <string name="propTitle_Dock">Dock batterij instellingen</string>
@@ -26,11 +25,11 @@
   <string name="prop_showNotDockedMsg">Laat toestand zien wanneer niet gedocked</string>
   <string name="prop_showNotDockedMsg_summary">Laat een bericht zien dat de secundaire batterij niet is verbonden wanneer niet gedocked</string>
   <string name="prop_textPosition">Tekst positie</string>
-  <string name="prop_textPosition_summary">Waar wil je de batterij status zien</string>
+  <string name="prop_textPosition_summary">Waar wil je de batterijstatus zien (%s)</string>
   <string name="prop_textSize">Tekst grootte</string>
   <string name="prop_textColor">Tekst kleur</string>
   <string name="prop_margin">Margin locatie</string>
-  <string name="prop_margin_summary">Margin grootte is hetzelfde als de tekst grootte</string>
+  <string name="prop_margin_summary">Margin grootte is hetzelfde als de tekst grootte (%s)</string>
   <string name="prop_showLabel">Laat batterij label zien</string>
   <string name="prop_showLabel_summary">Laat het batterij niveau zien in de onderste margin.
 \nKan overshreven worden als de batterij toestand op dezelfde plaats word weergegeven</string>
@@ -99,13 +98,5 @@ een apparaat dat een tweede accu in het dock station heeft. Helaas hebben de sta
   <string name="battery_info_dock_status_discharging">Ontladen</string>
   <string name="battery_info_dock_status_docked">Docked</string>
   <string name="battery_info_dock_status_undocked">Niet docked</string>
-  <string name="donate_head">Dank u voor het ondersteuning van mijn widget. Uw hulp wordt zeer gewaardeerd!
-\n
-\nGelieve een van de onderstaande opties te kiezen     </string>
-  <string name="donate_play">Google Play</string>
-  <string name="donation_play_1">Standaard (£0.99)</string>
-  <string name="donation_play_3">Koop me een drankje (£3.00)</string>
-  <string name="donation_play_7">Als je echt houdt van nummer 7 (£7.77)</string>
-  <string name="donation_paypal">Ga naar PayPal</string>
   <string name="alert_just_swapped">BELANGRIJK! In deze versie hebben we de standaard volgorde van de icoontjes in de widget omgewisseld (je kan dit terug veranderen in de widget instellingen). De batterij van je dock staat nu links en de hoofdbatterij staat rechts, dit om overeen te komen met de wijzigingen in de nieuwe Asus updates!</string>
 </resources>

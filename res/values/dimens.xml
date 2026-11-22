@@ -19,8 +19,5 @@
     <dimen name="preference_screen_side_margin">0dp</dimen>
     <!-- Preference activity side margins negative-->
     <dimen name="preference_screen_side_margin_negative">0dp</dimen>
-    <dimen name="preference_screen_header_padding_side">0dp</dimen>
     <dimen name="preference_screen_header_vertical_padding">0dp</dimen>
-    <integer name="preferences_left_pane_weight">4</integer>
-    <integer name="preferences_right_pane_weight">6</integer>
 </resources>

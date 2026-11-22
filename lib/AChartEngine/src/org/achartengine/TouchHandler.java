@@ -81,9 +81,9 @@ public class TouchHandler implements ITouchHandler {
     int action = event.getAction();
     if (mRenderer != null && action == MotionEvent.ACTION_MOVE) {
       if (oldX >= 0 || oldY >= 0) {
-        float newX = event.getX(0);
-        float newY = event.getY(0);
-        if (event.getPointerCount() > 1 && (oldX2 >= 0 || oldY2 >= 0) && mRenderer.isZoomEnabled()) {
+        float newX = event.getX();
+        float newY = event.getY();
+        if (android.os.Build.VERSION.SDK_INT >= 5 && event.getPointerCount() > 1 && (oldX2 >= 0 || oldY2 >= 0) && mRenderer.isZoomEnabled()) {
           float newX2 = event.getX(1);
           float newY2 = event.getY(1);
           float newDeltaX = Math.abs(newX - newX2);
@@ -133,8 +133,8 @@ public class TouchHandler implements ITouchHandler {
         return true;
       }
     } else if (action == MotionEvent.ACTION_DOWN) {
-      oldX = event.getX(0);
-      oldY = event.getY(0);
+      oldX = event.getX();
+      oldY = event.getY();
       if (mRenderer != null && mRenderer.isZoomEnabled() && zoomR.contains(oldX, oldY)) {
         if (oldX < zoomR.left + zoomR.width() / 3) {
           graphicalView.zoomIn();

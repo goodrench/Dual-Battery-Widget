@@ -19,7 +19,6 @@ package org.flexlabs.widgets.dualbattery;
 public class Constants {
     public static final String LOG = "FlexLabs.DBW";
     public static final boolean DEBUG = false;
-    public static boolean HAS_GPLAY_BILLING = false;
     public static String VERSION;
 
     public static final String EXTRA_WIDGET_IDS = "widgetIds";
@@ -91,5 +90,4 @@ public class Constants {
     public static final String SETTING_DEFAULT_DAYS_TAB = "defaultDaysTab";
     public static final int SETTING_DEFAULT_DAYS_TAB_DEFAULT = 3;
 
-    public static final String URI_PAYPAL = "https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=6UHRDDAPAMSTL&lc=GB&item_name=Donation%20for%20Artiom%20Chilaru&currency_code=GBP&bn=PP%2dDonationsBF%3abtn_donate_SM%2egif%3aNonHosted";
 }

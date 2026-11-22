@@ -17,7 +17,6 @@
   <string name="propHeader_BatteryInfo">Информация о батареях</string>
   <string name="propHeader_Properties">Настройки виджета</string>
   <string name="propHeader_Feedback">Оставить отзыв</string>
-  <string name="propHeader_Donate">Пожертвовать</string>
   <string name="propHeader_About">О виджете</string>
   <string name="propTitle_General">Общие</string>
   <string name="propTitle_Dock">Настройки для батареи дока</string>
@@ -100,13 +99,5 @@
   <string name="battery_info_dock_status_discharging">Разрядка</string>
   <string name="battery_info_dock_status_docked">Подключена</string>
   <string name="battery_info_dock_status_undocked">Не подключена</string>
-  <string name="donate_head">Благодарю вас за поддержку моего виджета. Я очень ценю вашу помощь!
-\n
-\nПожалуйста выберите один из вариантов ниже     </string>
-  <string name="donate_play">Google Play</string>
-  <string name="donation_play_1">Стандарт (£0,99)</string>
-  <string name="donation_play_3">Купить мне выпить (£3.00)</string>
-  <string name="donation_play_7">Если вам действительно нравится номер 7 (£7.77)</string>
-  <string name="donation_paypal">Перейти к PayPal</string>
   <string name="alert_just_swapped">ВАЖНО! В этой версии мы поменяли порядок значков в виджете по умолчанию (вы можете изменить его обратно в настройках). Батарея док теперь будет слева, и основной аккумулятор справа, чтобы отразить изменения в последних обновлениях от Asus!</string>
 </resources>

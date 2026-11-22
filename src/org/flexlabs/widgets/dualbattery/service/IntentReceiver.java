@@ -33,10 +33,7 @@ public class IntentReceiver extends BroadcastReceiver {
     private boolean screenOff = false;
 
     public IntentReceiver(Context context) {
-        // The dock notification icon will only show up on the transformer (aka Honeycomb+)
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB) {
-            mNotificationManager = new NotificationManager(context);
-        }
+        mNotificationManager = new NotificationManager(context);
     }
 
     @Override
@@ -122,15 +119,12 @@ public class IntentReceiver extends BroadcastReceiver {
                         }
 
                         if (!screenOff) {
-                            // The dock notification icon will only show up on the transformer (aka Honeycomb+)
-                            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB) {
-                                if (_level.is_dockConnected())
-                                    mNotificationManager.update(
-                                            _level.get_dock_level(),
-                                            _level.get_dock_status() == Constants.DOCK_STATE_CHARGING);
-                                else
-                                    mNotificationManager.hide();
-                            }
+                            if (_level.is_dockConnected())
+                                mNotificationManager.update(
+                                        _level.get_dock_level(),
+                                        _level.get_dock_status() == Constants.DOCK_STATE_CHARGING);
+                            else
+                                mNotificationManager.hide();
                             BatteryWidgetUpdater.updateAllWidgets(_context, _level, null);
                         }
                     } catch (Exception ignore) { }

@@ -18,7 +18,6 @@
     <string name="propHeader_BatteryInfo">Battery information</string>
     <string name="propHeader_Properties">Widget properties</string>
     <string name="propHeader_Feedback">Feedback</string>
-    <string name="propHeader_Donate">Donate</string>
     <string name="propHeader_About">About</string>
 
     <string name="propTitle_General">General</string>
@@ -127,20 +126,15 @@
     <string name="battery_info_dock_status_docked">Docked</string>
     <string name="battery_info_dock_status_undocked">Not docked</string>
 
-    <string name="donate_head">
-        Thank you for choosing to support my widget. Your help is greatly appreciated!
-        \n
-        \nPlease choose one of the options below
-    </string>
-    <string name="donate_play">Google Play</string>
-    <string name="donation_play_1">Standard (£0.99)</string>
-    <string name="donation_play_3">Buy me a drink (£3.00)</string>
-    <string name="donation_play_7">If you really like number 7 (£7.77)</string>
-    <string name="donate_paypal">PayPal</string>
-    <string name="donation_paypal">Go to PayPal</string>
-
     <string name="alert_just_swapped">IMPORTANT! With this version we have switched the default order of the icons in the widget (you can change it back in the widget settings). The dock battery will now be the on the left, and the main battery on the right side, to reflect the changes in the new Asus updates!</string>
 
     <string name="theme_default">Default</string>
     <string name="theme_default_sideways">Default Sideways</string>
+    <string name="battery_info_voltage_value">%1$s %2$s</string>
+    <string name="battery_info_temperature_value">%1$s %2$s</string>
+    <string name="battery_history_empty">No battery history available</string>
+    <plurals name="battery_history_description">
+        <item quantity="one">Battery history for the last %1$d day</item>
+        <item quantity="other">Battery history for the last %1$d days</item>
+    </plurals>
 </resources>

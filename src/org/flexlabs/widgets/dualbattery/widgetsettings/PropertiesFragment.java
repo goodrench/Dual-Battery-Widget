@@ -17,24 +17,27 @@
 package org.flexlabs.widgets.dualbattery.widgetsettings;
 
 import android.os.Bundle;
+import androidx.preference.PreferenceFragmentCompat;
 import org.flexlabs.widgets.dualbattery.BatteryLevel;
 import org.flexlabs.widgets.dualbattery.Constants;
 import org.flexlabs.widgets.dualbattery.R;
-import org.flexlabs.widgets.dualbattery.ui.PreferenceListFragment;
+import org.flexlabs.widgets.dualbattery.storage.PreferenceValues;
 
-public class PropertiesFragment extends PreferenceListFragment {
+public class PropertiesFragment extends PreferenceFragmentCompat {
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        WidgetActivity activity = (WidgetActivity)getActivity();
-        int appWidgetId = activity.appWidgetId;
-
-        if (getPreferenceScreen() == null) {
-            getPreferenceManager().setSharedPreferencesName(Constants.SETTINGS_WIDGET_FILE + appWidgetId);
-            addPreferencesFromResource(R.xml.widget_properties_general);
-            if (BatteryLevel.getCurrent().is_dockFriendly()) {
-                addPreferencesFromResource(R.xml.widget_properties_dock);
-            }
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+        WidgetActivity activity = (WidgetActivity) requireActivity();
+        String preferencesName = Constants.SETTINGS_WIDGET_FILE + activity.appWidgetId;
+        getPreferenceManager().setSharedPreferencesName(preferencesName);
+        android.content.SharedPreferences preferences = requireContext().getSharedPreferences(
+                preferencesName, android.content.Context.MODE_PRIVATE);
+        PreferenceValues.migrateToString(preferences, Constants.SETTING_TEXT_POS);
+        PreferenceValues.migrateToString(preferences, Constants.SETTING_SHOW_SELECTION);
+        PreferenceValues.migrateToString(preferences, Constants.SETTING_TEXT_COLOR);
+        PreferenceValues.migrateToString(preferences, Constants.SETTING_MARGIN);
+        addPreferencesFromResource(R.xml.widget_properties_general);
+        if (BatteryLevel.getCurrent().is_dockFriendly()) {
+            addPreferencesFromResource(R.xml.widget_properties_dock);
         }
     }
 }

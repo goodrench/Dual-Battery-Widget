@@ -16,24 +16,24 @@
 
 package org.flexlabs.widgets.dualbattery.app;
 
+import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
+import androidx.preference.PreferenceFragmentCompat;
 import org.flexlabs.widgets.dualbattery.BatteryLevel;
 import org.flexlabs.widgets.dualbattery.Constants;
 import org.flexlabs.widgets.dualbattery.R;
-import org.flexlabs.widgets.dualbattery.ui.PreferenceListFragment;
+import org.flexlabs.widgets.dualbattery.storage.PreferenceValues;
 
-public class SettingsFragment extends PreferenceListFragment {
+public class SettingsFragment extends PreferenceFragmentCompat {
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        if (getPreferenceScreen() == null) {
-            getPreferenceManager().setSharedPreferencesName(Constants.SETTINGS_FILE);
-            if (BatteryLevel.getCurrent().is_dockFriendly()) {
-                addPreferencesFromResource(R.xml.settings_0_dock_notif);
-            }
-            addPreferencesFromResource(R.xml.settings_1_general);
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+        getPreferenceManager().setSharedPreferencesName(Constants.SETTINGS_FILE);
+        PreferenceValues.migrateToString(
+                requireContext().getSharedPreferences(Constants.SETTINGS_FILE, Context.MODE_PRIVATE),
+                Constants.SETTING_DEFAULT_DAYS_TAB);
+        if (BatteryLevel.getCurrent().is_dockFriendly()) {
+            addPreferencesFromResource(R.xml.settings_0_dock_notif);
         }
+        addPreferencesFromResource(R.xml.settings_1_general);
     }
 }

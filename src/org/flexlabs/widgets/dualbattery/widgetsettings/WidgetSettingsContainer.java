@@ -18,9 +18,9 @@ package org.flexlabs.widgets.dualbattery.widgetsettings;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Build;
 import org.flexlabs.widgets.dualbattery.BatteryLevel;
 import org.flexlabs.widgets.dualbattery.Constants;
+import org.flexlabs.widgets.dualbattery.storage.PreferenceValues;
 
 public class WidgetSettingsContainer {
     private int textSize;
@@ -40,6 +40,10 @@ public class WidgetSettingsContainer {
         int version = pref.getInt(Constants.SETTING_VERSION, 1);
         if (version != Constants.SETTING_VERSION_CURRENT)
             updateWidgetSettings(pref, version);
+        PreferenceValues.migrateToString(pref, Constants.SETTING_TEXT_POS);
+        PreferenceValues.migrateToString(pref, Constants.SETTING_SHOW_SELECTION);
+        PreferenceValues.migrateToString(pref, Constants.SETTING_TEXT_COLOR);
+        PreferenceValues.migrateToString(pref, Constants.SETTING_MARGIN);
         return pref;
     }
 
@@ -51,10 +55,10 @@ public class WidgetSettingsContainer {
         showOldStatus = pref.getBoolean(Constants.SETTING_SHOW_OLD_DOCK, Constants.SETTING_SHOW_OLD_DOCK_DEFAULT);
         swapBatteries = pref.getBoolean(Constants.SETTING_SWAP_BATTERIES, Constants.SETTING_SWAP_BATTERIES_DEFAULT);
         textSize = pref.getInt(Constants.SETTING_TEXT_SIZE, Constants.SETTING_TEXT_SIZE_DEFAULT);
-        textPosition = pref.getInt(Constants.SETTING_TEXT_POS, Constants.SETTING_TEXT_POS_DEFAULT);
-        batterySelection = pref.getInt(Constants.SETTING_SHOW_SELECTION, Constants.SETTING_SHOW_SELECTION_DEFAULT);
-        textColorCode = pref.getInt(Constants.SETTING_TEXT_COLOR, Constants.SETTING_TEXT_COLOR_DEFAULT);
-        margin = pref.getInt(Constants.SETTING_MARGIN, Constants.SETTING_MARGIN_DEFAULT);
+        textPosition = PreferenceValues.getInt(pref, Constants.SETTING_TEXT_POS, Constants.SETTING_TEXT_POS_DEFAULT);
+        batterySelection = PreferenceValues.getInt(pref, Constants.SETTING_SHOW_SELECTION, Constants.SETTING_SHOW_SELECTION_DEFAULT);
+        textColorCode = PreferenceValues.getInt(pref, Constants.SETTING_TEXT_COLOR, Constants.SETTING_TEXT_COLOR_DEFAULT);
+        margin = PreferenceValues.getInt(pref, Constants.SETTING_MARGIN, Constants.SETTING_MARGIN_DEFAULT);
         theme = pref.getString(Constants.SETTING_THEME, Constants.SETTING_THEME_DEFAULT);
     }
 
@@ -69,7 +73,7 @@ public class WidgetSettingsContainer {
             .putInt(Constants.SETTING_TEMP_UNITS, tempUnitsC
                 ? Constants.TEMP_UNIT_CELSIUS
                 : Constants.TEMP_UNIT_FAHRENHEIT)
-            .commit();
+            .apply();
     }
 
     public static boolean getUpgradeSwappedSingle(Context context, int widgetId) {
@@ -78,7 +82,7 @@ public class WidgetSettingsContainer {
         if (justSwapped) {
             pref.edit()
                 .remove(Constants.SETTING_JUST_SWAPPED)
-                .commit();
+                .apply();
         }
         return justSwapped;
     }
@@ -128,53 +132,18 @@ public class WidgetSettingsContainer {
         }
 
         editor.putInt(Constants.SETTING_VERSION, version);
-        if (Build.VERSION.SDK_INT < 9)
-            editor.commit();
-        else
-            editor.apply();
+        editor.apply();
     }
 
-    public int getTextSize() {
-        return textSize;
-    }
-
-    public int getTextPosition() {
-        return textPosition;
-    }
-
-    public int getBatterySelection() {
-        return batterySelection;
-    }
-
-    public int getTextColorCode() {
-        return textColorCode;
-    }
-
-    public int getMargin() {
-        return margin;
-    }
-
-    public boolean isAlwaysShow() {
-        return alwaysShow;
-    }
-
-    public boolean isShowNotDocked() {
-        return showNotDocked;
-    }
-
-    public boolean isShowLabel() {
-        return showLabel;
-    }
-
-    public boolean isShowOldStatus() {
-        return showOldStatus;
-    }
-
-    public boolean isSwapBatteries() {
-        return swapBatteries;
-    }
-
-    public String getTheme() {
-        return theme;
-    }
+    public int getTextSize() { return textSize; }
+    public int getTextPosition() { return textPosition; }
+    public int getBatterySelection() { return batterySelection; }
+    public int getTextColorCode() { return textColorCode; }
+    public int getMargin() { return margin; }
+    public boolean isAlwaysShow() { return alwaysShow; }
+    public boolean isShowNotDocked() { return showNotDocked; }
+    public boolean isShowLabel() { return showLabel; }
+    public boolean isShowOldStatus() { return showOldStatus; }
+    public boolean isSwapBatteries() { return swapBatteries; }
+    public String getTheme() { return theme; }
 }

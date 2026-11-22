@@ -17,15 +17,32 @@
 package org.flexlabs.widgets.dualbattery.service;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
 import android.os.IBinder;
 import org.flexlabs.widgets.dualbattery.BatteryLevel;
-import org.flexlabs.widgets.dualbattery.Constants;
 import org.flexlabs.widgets.dualbattery.BatteryWidgetUpdater;
+import org.flexlabs.widgets.dualbattery.Constants;
 
 public class MonitorService extends Service {
+    private static final int FOREGROUND_NOTIFICATION_ID = 2;
     private IntentReceiver batteryReceiver;
+
+    public static void start(Context context) {
+        start(context, null);
+    }
+
+    public static void start(Context context, int[] widgetIds) {
+        Intent intent = new Intent(context, MonitorService.class);
+        if (widgetIds != null)
+            intent.putExtra(Constants.EXTRA_WIDGET_IDS, widgetIds);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+            context.startForegroundService(intent);
+        else
+            context.startService(intent);
+    }
 
     public IBinder onBind(Intent intent) {
         return null;
@@ -33,19 +50,26 @@ public class MonitorService extends Service {
 
     public void onCreate() {
         super.onCreate();
+        startForeground(FOREGROUND_NOTIFICATION_ID, NotificationManager.createForegroundNotification(this));
         batteryReceiver = new IntentReceiver(this);
-        registerReceiver(batteryReceiver, new IntentFilter(Intent.ACTION_SCREEN_ON));
-        registerReceiver(batteryReceiver, new IntentFilter(Intent.ACTION_SCREEN_OFF));
-        registerReceiver(batteryReceiver, new IntentFilter(Intent.ACTION_DOCK_EVENT));
-        registerReceiver(batteryReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+        registerSystemReceiver(new IntentFilter(Intent.ACTION_SCREEN_ON));
+        registerSystemReceiver(new IntentFilter(Intent.ACTION_SCREEN_OFF));
+        registerSystemReceiver(new IntentFilter(Intent.ACTION_DOCK_EVENT));
+        registerSystemReceiver(new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
     }
-    
+
+    private void registerSystemReceiver(IntentFilter filter) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+            registerReceiver(batteryReceiver, filter, Context.RECEIVER_EXPORTED);
+        else
+            registerReceiver(batteryReceiver, filter);
+    }
+
     private void processStartIntent(Intent intent) {
         if (intent == null)
             return;
         final int[] widgetIds = intent.getIntArrayExtra(Constants.EXTRA_WIDGET_IDS);
         if (widgetIds != null) {
-            // Update our widgets on the non UI thread
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -55,11 +79,6 @@ public class MonitorService extends Service {
                 }
             }).start();
         }
-    }
-
-    @Override
-    public void onStart(Intent intent, int startId) { // For compatibility with android 1.6
-        processStartIntent(intent);
     }
 
     @Override

@@ -16,26 +16,23 @@
 
 package org.flexlabs.widgets.dualbattery.app;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import com.actionbarsherlock.app.SherlockFragment;
-import org.flexlabs.widgets.dualbattery.Constants;
+import androidx.fragment.app.Fragment;
 import org.flexlabs.widgets.dualbattery.R;
 
-public class AboutFragment extends SherlockFragment {
+public class AboutFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.about, null);
-        Linkify.addLinks((TextView)view.findViewById(R.id.about_link_flexlabs), Linkify.ALL);
-        Linkify.addLinks((TextView)view.findViewById(R.id.about_link_googleplus), Linkify.ALL);
-        Linkify.addLinks((TextView)view.findViewById(R.id.about_link_github), Linkify.ALL);
-        Linkify.addLinks((TextView)view.findViewById(R.id.about_link_translate), Linkify.ALL);
+        View view = inflater.inflate(R.layout.about, container, false);
+        Linkify.addLinks((TextView) view.findViewById(R.id.about_link_flexlabs), Linkify.ALL);
+        Linkify.addLinks((TextView) view.findViewById(R.id.about_link_googleplus), Linkify.ALL);
+        Linkify.addLinks((TextView) view.findViewById(R.id.about_link_github), Linkify.ALL);
+        Linkify.addLinks((TextView) view.findViewById(R.id.about_link_translate), Linkify.ALL);
         return view;
     }
 }

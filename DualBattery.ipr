@@ -11,7 +11,6 @@
       <directory url="file://$PROJECT_DIR$/lib/ActionBarSherlock/library/gen" includeSubdirectories="true" />
       <directory url="file://$PROJECT_DIR$/lib/MixPanel/gen" includeSubdirectories="true" />
       <directory url="file://$PROJECT_DIR$/lib/AChartEngine/gen" includeSubdirectories="true" />
-      <directory url="file://$PROJECT_DIR$/lib/AndroidBilling/AndroidBillingLibrary/gen" includeSubdirectories="true" />
       <directory url="file://$PROJECT_DIR$/lib/ViewPagerIndicator/library/gen" includeSubdirectories="true" />
     </excludeFromCompile>
     <resourceExtensions />
@@ -190,7 +189,6 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/lib/AChartEngine/AChartEngine.iml" filepath="$PROJECT_DIR$/lib/AChartEngine/AChartEngine.iml" />
       <module fileurl="file://$PROJECT_DIR$/lib/ActionBarSherlock/library/ActionBarSherlock.iml" filepath="$PROJECT_DIR$/lib/ActionBarSherlock/library/ActionBarSherlock.iml" />
-      <module fileurl="file://$PROJECT_DIR$/lib/AndroidBilling/AndroidBillingLibrary/AndroidBilling.iml" filepath="$PROJECT_DIR$/lib/AndroidBilling/AndroidBillingLibrary/AndroidBilling.iml" />
       <module fileurl="file://$PROJECT_DIR$/DualBattery.iml" filepath="$PROJECT_DIR$/DualBattery.iml" />
       <module fileurl="file://$PROJECT_DIR$/lib/ViewPagerIndicator/library/ViewPagerIndicator.iml" filepath="$PROJECT_DIR$/lib/ViewPagerIndicator/library/ViewPagerIndicator.iml" />
     </modules>
@@ -207,7 +205,6 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/ActionBarSherlock" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/lib/AndroidBilling" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/ViewPagerIndicator" vcs="Git" />
   </component>
   <component name="libraryTable">

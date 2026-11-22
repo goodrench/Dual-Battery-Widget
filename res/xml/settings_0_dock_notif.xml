@@ -17,7 +17,7 @@
   -->
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <CheckBoxPreference android:key="showNotificationIcon"
-                        android:title="@string/prop_showNotificationIcon" android:summary="@string/prop_showNotificationIcon_summary"
-                        android:defaultValue="true" />
+    <SwitchPreferenceCompat android:key="showNotificationIcon"
+                            android:title="@string/prop_showNotificationIcon" android:summary="@string/prop_showNotificationIcon_summary"
+                            android:defaultValue="true" />
 </PreferenceScreen>

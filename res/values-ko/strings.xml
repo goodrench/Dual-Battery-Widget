@@ -17,7 +17,6 @@
   <string name="propHeader_BatteryInfo">배터리 정보</string>
   <string name="propHeader_Properties">위젯 속성</string>
   <string name="propHeader_Feedback">의견</string>
-  <string name="propHeader_Donate">기부</string>
   <string name="propHeader_About">About</string>
   <string name="propTitle_General">일반</string>
   <string name="propTitle_Dock">Dock 배터리 설정</string>
@@ -99,12 +98,4 @@
   <string name="battery_info_dock_status_discharging">방전</string>
   <string name="battery_info_dock_status_docked">도킹</string>
   <string name="battery_info_dock_status_undocked">도킹 않됨</string>
-  <string name="donate_head">저의 위젯을 지원해주는걸 선택해주셔서 감사합니다. 당신의 도움은 매우 도움이됩니다!
-\n
-\n아래에 있는 옵션중에 하나를 골라주세요</string>
-  <string name="donate_play">구글 플레이</string>
-  <string name="donation_play_1">표준 (£0.99)</string>
-  <string name="donation_play_3">저에게 음료수를 사주세요 (£3.00)</string>
-  <string name="donation_play_7">숫자 7을 정말 좋아한다면 (£7.77)</string>
-  <string name="donation_paypal">PayPal로 기부</string>
 </resources>
